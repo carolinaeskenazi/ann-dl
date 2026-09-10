@@ -36,6 +36,7 @@ DATA = r"C:\Users\carol\insper\6_semestre\train.csv"
 rng = np.random.default_rng(42)
 
 
+# --8<-- [start:columns]
 SPENDING = [
     "RoomService",
     "FoodCourt",
@@ -61,8 +62,10 @@ DROP_COLUMNS = [
     "Name",
     "PassengerId",
 ]
+# --8<-- [end:columns]
 
 
+# --8<-- [start:encoder]
 def make_encoder():
     """Encoder que ignora categorias novas no conjunto de teste."""
 
@@ -70,6 +73,7 @@ def make_encoder():
         handle_unknown="ignore",
         sparse_output=False,
     )
+# --8<-- [end:encoder]
 
 
 def main():
@@ -78,6 +82,7 @@ def main():
         exist_ok=True,
     )
 
+    # --8<-- [start:describe]
     df = pd.read_csv(DATA)
 
     # =============================================================
@@ -124,7 +129,9 @@ def main():
             float_format=lambda x: f"{x:.3f}"
         )
     )
+    # --8<-- [end:describe]
 
+    # --8<-- [start:split]
     # =============================================================
     # B — Split before you transform
     # =============================================================
@@ -177,7 +184,9 @@ def main():
         f"média={foodcourt_train_mean:.3f}, "
         f"mediana={foodcourt_train_median:.3f}"
     )
+    # --8<-- [end:split]
 
+    # --8<-- [start:preprocess]
     # =============================================================
     # Remocao das colunas que o enunciado manda descartar.
     # =============================================================
@@ -270,7 +279,9 @@ def main():
     test_num[log_columns] = np.log1p(
         test_num[log_columns]
     )
+    # --8<-- [end:preprocess]
 
+    # --8<-- [start:fig6]
     # =============================================================
     # D1 — Figura 6
     # =============================================================
@@ -342,7 +353,9 @@ def main():
     )
 
     plt.close(fig)
+    # --8<-- [end:fig6]
 
+    # --8<-- [start:encode-scale]
     # =============================================================
     # C2 — Categorical features: One-Hot Encoding
     # =============================================================
@@ -387,7 +400,9 @@ def main():
         test_num_scaled,
         test_cat_encoded,
     ])
+    # --8<-- [end:encode-scale]
 
+    # --8<-- [start:checks]
     # =============================================================
     # D2 — Final checks
     # =============================================================
@@ -454,6 +469,7 @@ def main():
         f"Número de features finais: "
         f"{X_train_final.shape[1]}"
     )
+    # --8<-- [end:checks]
 
 
 if __name__ == "__main__":

@@ -11,23 +11,17 @@ ai_use: "Claude e ChatGPT foram utilizados para revisar o código, verificar sua
 
 ## Exercise 1 — Point Clouds: Geometry and Spread in 2D
 
-**Abordagem.** Foram geradas quatro classes gaussianas em duas dimensões, com 100 pontos por classe, utilizando as médias e os desvios padrão definidos no enunciado. Para garantir a reprodutibilidade, foi utilizado o gerador `rng = np.random.default_rng(42)`.
-
-Além do conjunto original, foram criadas quatro versões das mesmas classes usando os fatores de escala \(s = 0.5,\ 1,\ 2,\ 4\). As médias permanecem fixas e apenas os desvios padrão são multiplicados por \(s\). Para avaliar a separação entre as classes, foram calculados o *separation ratio* e a taxa de mistura. Nenhum modelo foi treinado.
-
-**Código.** O script utilizado está em [`code/exercise1_point_clouds.py`](https://github.com/carolinaeskenazi/ann-dl/blob/main/docs/exercises/data/code/exercise1_point_clouds.py). Para reproduzir as figuras e os resultados, a partir da raiz do repositório:
+O script completo está em [`code/exercise1_point_clouds.py`](https://github.com/carolinaeskenazi/ann-dl/blob/main/docs/exercises/data/code/exercise1_point_clouds.py) e gera todas as figuras e números deste exercício. Para reproduzir, a partir da raiz do repositório:
 
 ```bash
 python docs/exercises/data/code/exercise1_point_clouds.py
 ```
 
-??? example "Código — `exercise1_point_clouds.py`"
-
-    ``` { .python .copy .select linenums='1' title="docs/exercises/data/code/exercise1_point_clouds.py" }
-    --8<-- "docs/exercises/data/code/exercise1_point_clouds.py"
-    ```
-
 ### A — Generate the clouds
+
+#### Abordagem
+
+Foram geradas quatro classes gaussianas em duas dimensões, com 100 pontos por classe, utilizando as médias e os desvios padrão definidos no enunciado. Para garantir a reprodutibilidade, foi utilizado o gerador `rng = np.random.default_rng(42)`, o mesmo em todo o script. Nenhum modelo foi treinado.
 
 O conjunto original possui 400 amostras, sendo 100 de cada classe.
 
@@ -38,14 +32,36 @@ O conjunto original possui 400 amostras, sendo 100 de cada classe.
 |    2   |  \((8,\ 1)\)  |      \((0.9,\ 0.9)\)     |
 |    3   |  \((15,\ 4)\) |      \((0.5,\ 2.0)\)     |
 
-![Nuvens de pontos das quatro classes gaussianas com seus centros e fronteiras esboçadas](figures/fig01-point-clouds.png)
+#### Código
+
+??? example "Código — `exercise1_point_clouds.py` — geração dos dados e Figura 1"
+
+    ``` { .python .copy .select }
+    --8<-- "docs/exercises/data/code/exercise1_point_clouds.py:config"
+
+    --8<-- "docs/exercises/data/code/exercise1_point_clouds.py:generate"
+
+    --8<-- "docs/exercises/data/code/exercise1_point_clouds.py:scatter"
+
+    --8<-- "docs/exercises/data/code/exercise1_point_clouds.py:datasets"
+
+    --8<-- "docs/exercises/data/code/exercise1_point_clouds.py:fig1"
+    ```
+
+#### Figuras
+
+![Nuvens de pontos das quatro classes gaussianas com seus centros](figures/fig01-point-clouds.png)
 /// caption
-**Figura 1** — As quatro classes no plano \((x_1,x_2)\), para \(s=1\). Os X pretos representam as médias das classes e as linhas mostram um esboço das regiões de decisão (item C).
+**Figura 1** — As quatro classes no plano \((x_1,x_2)\), para \(s=1\). Os X pretos representam as médias das classes.
 ///
+
+#### Análise
 
 As classes possuem formatos diferentes por causa dos desvios padrão. A classe 0, por exemplo, é mais espalhada no eixo \(x_2\), enquanto a classe 2 apresenta a mesma dispersão nos dois eixos e forma uma nuvem mais compacta.
 
 ### B — More or less spread out
+
+#### Abordagem
 
 Para analisar o efeito da dispersão, foram gerados quatro datasets usando
 
@@ -54,13 +70,6 @@ s \in \{0.5,\ 1,\ 2,\ 4\}.
 $$
 
 As médias não mudam. Somente os desvios padrão são multiplicados pelo fator \(s\).
-
-![As quatro versões do conjunto de dados para diferentes fatores de escala](figures/fig02-spread.png)
-/// caption
-**Figura 2** — As mesmas quatro classes com os desvios padrão multiplicados por \(s = 0.5,\ 1,\ 2,\ 4\). Todos os painéis utilizam os mesmos limites dos eixos.
-///
-
-Quanto maior o valor de \(s\), maior a dispersão dos pontos e maior a sobreposição entre as classes.
 
 O *separation ratio* foi calculado por
 
@@ -78,6 +87,40 @@ $$
 =
 \frac{\sigma_{k,x}+\sigma_{k,y}}{2}.
 $$
+
+A taxa de mistura corresponde à fração dos pontos cujo centro de classe mais próximo não pertence à própria classe.
+
+#### Código
+
+??? example "Código — `exercise1_point_clouds.py` — separation ratio, taxa de mistura e Figuras 2 e 3"
+
+    ``` { .python .copy .select }
+    --8<-- "docs/exercises/data/code/exercise1_point_clouds.py:metric-functions"
+
+    --8<-- "docs/exercises/data/code/exercise1_point_clouds.py:metrics"
+
+    --8<-- "docs/exercises/data/code/exercise1_point_clouds.py:fig2"
+
+    --8<-- "docs/exercises/data/code/exercise1_point_clouds.py:fig3"
+
+    --8<-- "docs/exercises/data/code/exercise1_point_clouds.py:report"
+    ```
+
+#### Figuras
+
+![As quatro versões do conjunto de dados para diferentes fatores de escala](figures/fig02-spread.png)
+/// caption
+**Figura 2** — As mesmas quatro classes com os desvios padrão multiplicados por \(s = 0.5,\ 1,\ 2,\ 4\). Todos os painéis utilizam os mesmos limites dos eixos.
+///
+
+![Taxa de mistura em função do fator de escala](figures/fig03-mixing-rate.png)
+/// caption
+**Figura 3** — Taxa de mistura em função do fator de escala \(s\). A proporção de pontos mais próximos do centro de outra classe aumenta conforme as nuvens se espalham.
+///
+
+#### Análise
+
+Quanto maior o valor de \(s\), maior a dispersão dos pontos e maior a sobreposição entre as classes.
 
 Para \(s=1\), os desvios médios são
 
@@ -119,7 +162,7 @@ $$
 
 Esse valor é obtido diretamente da fórmula, sem gerar novos pontos.
 
-A taxa de mistura corresponde à fração dos pontos cujo centro de classe mais próximo não pertence à própria classe.
+As taxas de mistura obtidas foram:
 
 | \(s\) | Pontos misturados | Taxa de mistura |
 | :---: | :---------------: | :-------------: |
@@ -127,11 +170,6 @@ A taxa de mistura corresponde à fração dos pontos cujo centro de classe mais 
 |   1   |      29 / 400     |    **7.25%**    |
 |   2   |      77 / 400     |    **19.25%**   |
 |   4   |     193 / 400     |    **48.25%**   |
-
-![Taxa de mistura em função do fator de escala](figures/fig03-mixing-rate.png)
-/// caption
-**Figura 3** — Taxa de mistura em função do fator de escala \(s\). A proporção de pontos mais próximos do centro de outra classe aumenta conforme as nuvens se espalham.
-///
 
 Em \(s=0.5\), praticamente não há mistura. Em \(s=1\), a taxa sobe para **7.25%**, mostrando que já existe sobreposição relevante entre algumas classes.
 
@@ -142,6 +180,29 @@ O valor de \(r_{ij}\) deve ser interpretado como uma medida de separação relat
 Em \(s=2\), o menor ratio cai para **0.663** e a taxa de mistura chega a **19.25%**. Em \(s=4\), o menor ratio é aproximadamente **0.331** e a taxa de mistura chega a **48.25%**.
 
 ### C — Analysis
+
+#### Abordagem
+
+As fronteiras foram esboçadas sobre os mesmos pontos da Figura 1, a partir das distribuições gaussianas conhecidas. Para cada região do plano foi verificada qual classe apresentava maior densidade. Nenhum modelo foi treinado.
+
+#### Código
+
+??? example "Código — `exercise1_point_clouds.py` — esboço das fronteiras"
+
+    ``` { .python .copy .select }
+    --8<-- "docs/exercises/data/code/exercise1_point_clouds.py:boundaries"
+
+    --8<-- "docs/exercises/data/code/exercise1_point_clouds.py:fig1-boundaries"
+    ```
+
+#### Figuras
+
+![Nuvens de pontos com as fronteiras de decisão esboçadas](figures/fig01-boundaries.png)
+/// caption
+**Figura 1 (com fronteiras)** — Esboço das fronteiras de decisão sobre os pontos da Figura 1, para \(s=1\). Cada região colorida é a área em que a classe correspondente tem maior densidade.
+///
+
+#### Análise
 
 Na configuração original, com \(s=1\), as classes apresentam diferentes níveis de sobreposição. A classe 3 permanece mais isolada, enquanto a maior dificuldade ocorre entre as classes 0 e 1, que possuem o menor *separation ratio*, \(r_{01}=1.326\).
 
@@ -154,8 +215,6 @@ $$
 o que faz parte de seus pontos se estenderem na direção da classe 1.
 
 Uma única reta não consegue separar quatro classes, pois divide o plano em apenas duas regiões. Um conjunto de fronteiras lineares consegue criar mais regiões, mas não garante separação perfeita quando existem pontos de diferentes classes ocupando regiões semelhantes.
-
-As fronteiras desenhadas na Figura 1 foram construídas a partir das distribuições gaussianas conhecidas. Para cada região do plano foi verificada qual classe apresentava maior densidade. Nenhum modelo foi treinado.
 
 Como as classes possuem dispersões diferentes, as fronteiras não precisam ser retas. Um Perceptron simples consegue aprender apenas uma fronteira linear, enquanto uma rede com camadas ocultas pode representar fronteiras não lineares mais complexas.
 
@@ -189,27 +248,17 @@ Assim, quando \(s\) aumenta, cresce a região em que pontos de classes diferente
 
 ## Exercise 2 — Non-Linearity in Higher Dimensions
 
-**Abordagem.** Foram gerados dois conjuntos de dados com 1000 amostras em cinco dimensões. O Dataset I é composto por duas classes gaussianas multivariadas com médias e matrizes de covariância diferentes. O Dataset II é composto por duas cascas concêntricas, nas quais a informação mais importante para distinguir as classes é a distância até a origem.
-
-Para visualizar os dados, foi utilizado PCA para projetar cada dataset de cinco para duas dimensões. As distâncias entre centros e os raios foram calculados diretamente no espaço original 5D. Nenhum modelo foi treinado.
-
-**Código.** O script utilizado está em [`code/exercise2_non_linearity.py`](https://github.com/carolinaeskenazi/ann-dl/blob/main/docs/exercises/data/code/exercise2_non_linearity.py). Para reproduzir as figuras e os resultados:
+O script completo está em [`code/exercise2_non_linearity.py`](https://github.com/carolinaeskenazi/ann-dl/blob/main/docs/exercises/data/code/exercise2_non_linearity.py) e gera todas as figuras e números deste exercício. Para reproduzir:
 
 ```bash
 python docs/exercises/data/code/exercise2_non_linearity.py
 ```
 
-??? example "Código — `exercise2_non_linearity.py`"
-
-    ``` { .python .copy .select linenums='1' title="docs/exercises/data/code/exercise2_non_linearity.py" }
-    --8<-- "docs/exercises/data/code/exercise2_non_linearity.py"
-    ```
-
 ### A — Dataset I: shifted Gaussians
 
-O Dataset I possui 500 amostras da Classe A e 500 da Classe B.
+#### Abordagem
 
-As médias utilizadas são
+O Dataset I possui 500 amostras da Classe A e 500 da Classe B, geradas com distribuições normais multivariadas em cinco dimensões. As médias utilizadas são
 
 $$
 \mu_A=[0,0,0,0,0]
@@ -218,14 +267,48 @@ $$
 e
 
 $$
-\mu_B=[1.5,1.5,1.5,1.5,1.5].
+\mu_B=[1.5,1.5,1.5,1.5,1.5],
 $$
+
+com as matrizes de covariância do enunciado:
+
+$$
+\Sigma_A=
+\begin{pmatrix}
+1.0 & 0.8 & 0.1 & 0.0 & 0.0\\
+0.8 & 1.0 & 0.3 & 0.0 & 0.0\\
+0.1 & 0.3 & 1.0 & 0.5 & 0.0\\
+0.0 & 0.0 & 0.5 & 1.0 & 0.2\\
+0.0 & 0.0 & 0.0 & 0.2 & 1.0
+\end{pmatrix},
+\qquad
+\Sigma_B=
+\begin{pmatrix}
+1.5 & -0.7 & 0.2 & 0.0 & 0.0\\
+-0.7 & 1.5 & 0.4 & 0.0 & 0.0\\
+0.2 & 0.4 & 1.5 & 0.6 & 0.0\\
+0.0 & 0.0 & 0.6 & 1.5 & 0.3\\
+0.0 & 0.0 & 0.0 & 0.3 & 1.5
+\end{pmatrix}.
+$$
+
+#### Código
+
+??? example "Código — `exercise2_non_linearity.py` — Dataset I"
+
+    ``` { .python .copy .select }
+    --8<-- "docs/exercises/data/code/exercise2_non_linearity.py:dataset1"
+    ```
+
+#### Análise
 
 As duas classes também possuem matrizes de covariância diferentes. A Classe B apresenta variâncias maiores e a relação entre as duas primeiras features muda de correlação positiva na Classe A para negativa na Classe B.
 
 Isso significa que as classes diferem tanto pela posição dos centros quanto pela forma e orientação de sua dispersão no espaço.
 
 ### B — Dataset II: concentric shells
+
+#### Abordagem
 
 No Dataset II, inicialmente é gerado um vetor aleatório em cinco dimensões,
 
@@ -259,6 +342,16 @@ $$
 x=\rho u.
 $$
 
+#### Código
+
+??? example "Código — `exercise2_non_linearity.py` — Dataset II"
+
+    ``` { .python .copy .select }
+    --8<-- "docs/exercises/data/code/exercise2_non_linearity.py:dataset2"
+    ```
+
+#### Análise
+
 Os raios médios obtidos foram:
 
 $$
@@ -275,10 +368,39 @@ Apesar de as duas classes estarem aproximadamente centradas na mesma região, el
 
 ### C — Visualize and compare
 
+#### Abordagem
+
+Para visualizar os dados, foi utilizado PCA para projetar cada dataset de cinco para duas dimensões. As distâncias entre centros e os raios foram calculados diretamente no espaço original 5D. Nenhum modelo foi treinado.
+
+#### Código
+
+??? example "Código — `exercise2_non_linearity.py` — PCA, distâncias e Figuras 4 e 5"
+
+    ``` { .python .copy .select }
+    --8<-- "docs/exercises/data/code/exercise2_non_linearity.py:center-distance"
+
+    --8<-- "docs/exercises/data/code/exercise2_non_linearity.py:pca"
+
+    --8<-- "docs/exercises/data/code/exercise2_non_linearity.py:distances"
+
+    --8<-- "docs/exercises/data/code/exercise2_non_linearity.py:fig4"
+
+    --8<-- "docs/exercises/data/code/exercise2_non_linearity.py:fig5"
+    ```
+
+#### Figuras
+
 ![Projeção PCA dos dois datasets](figures/fig04-pca.png)
 /// caption
 **Figura 4** — Projeção dos dois datasets de cinco para duas dimensões usando PCA. Os dois primeiros componentes explicam **65.97%** da variância no Dataset I e **42.91%** no Dataset II.
 ///
+
+![Distribuição dos raios dos dois datasets](figures/fig05-radius.png)
+/// caption
+**Figura 5** — Histogramas do raio \(\lVert x\rVert\), calculado no espaço original de cinco dimensões. No Dataset II, as Classes C e D apresentam distribuições radiais claramente separadas.
+///
+
+#### Análise
 
 A variância explicada pelas duas primeiras componentes foi:
 
@@ -303,14 +425,23 @@ $$
 \boxed{d_{II}=0.266}.
 $$
 
-![Distribuição dos raios dos dois datasets](figures/fig05-radius.png)
-/// caption
-**Figura 5** — Histogramas do raio \(\lVert x\rVert\), calculado no espaço original de cinco dimensões. No Dataset II, as Classes C e D apresentam distribuições radiais claramente separadas.
-///
-
 No Dataset II, a distância entre os centros é de apenas **0.266**, mesmo com raios médios de **1.972** e **5.005**. Isso mostra que observar apenas os centros não é suficiente para caracterizar a separação entre as classes.
 
 ### D — Analysis
+
+#### Abordagem
+
+A análise usa os resultados do item C (distâncias entre centros, histogramas dos raios e variância explicada) e testa, no Dataset II, uma regra de decisão baseada no raio \(\lVert x\rVert\).
+
+#### Código
+
+??? example "Código — `exercise2_non_linearity.py` — regra baseada no raio"
+
+    ``` { .python .copy .select }
+    --8<-- "docs/exercises/data/code/exercise2_non_linearity.py:radius-rule"
+    ```
+
+#### Análise
 
 No Dataset II, a distância entre os centros é próxima de zero, mas os histogramas dos raios são claramente separados. Isso mostra que a informação que diferencia as classes não está na posição média dos pontos, mas na distância até a origem.
 
@@ -350,23 +481,29 @@ Isso confirma que o problema pode ser separado facilmente quando uma função n�
 
 ## Exercise 3 — Preparing Real-World Data for a Neural Network
 
-**Abordagem.** Foi utilizado o arquivo `train.csv` do Spaceship Titanic. Primeiro foram analisados o equilíbrio da variável alvo, os tipos de atributos, os valores ausentes e a distribuição das variáveis relacionadas a gastos.
-
-Depois, os dados foram divididos em treino e teste antes de qualquer transformação. Os valores numéricos ausentes foram preenchidos pela mediana do treino e os categóricos pela categoria mais frequente. Também foi criada a feature `TotalSpend`, foi aplicada a transformação \(\log(1+x)\) às variáveis de gastos, as variáveis categóricas foram convertidas com one-hot encoding e as numéricas foram escaladas para \([-1,1]\).
-
-**Código.** O script utilizado está em [`code/exercise3_preprocessing.py`](https://github.com/carolinaeskenazi/ann-dl/blob/main/docs/exercises/data/code/exercise3_preprocessing.py). Para reproduzir os resultados:
+O script completo está em [`code/exercise3_preprocessing.py`](https://github.com/carolinaeskenazi/ann-dl/blob/main/docs/exercises/data/code/exercise3_preprocessing.py) e gera a figura e os números deste exercício. Para reproduzir:
 
 ```bash
 python docs/exercises/data/code/exercise3_preprocessing.py
 ```
 
-??? example "Código — `exercise3_preprocessing.py`"
+### A — Get to know the data
 
-    ``` { .python .copy .select linenums='1' title="docs/exercises/data/code/exercise3_preprocessing.py" }
-    --8<-- "docs/exercises/data/code/exercise3_preprocessing.py"
+#### Abordagem
+
+Foi utilizado o arquivo `train.csv` do Spaceship Titanic. Primeiro foram analisados o equilíbrio da variável alvo, os tipos de atributos, os valores ausentes e a distribuição das variáveis relacionadas a gastos.
+
+#### Código
+
+??? example "Código — `exercise3_preprocessing.py` — descrição dos dados"
+
+    ``` { .python .copy .select }
+    --8<-- "docs/exercises/data/code/exercise3_preprocessing.py:columns"
+
+    --8<-- "docs/exercises/data/code/exercise3_preprocessing.py:describe"
     ```
 
-### A — Get to know the data
+#### Análise
 
 O objetivo do Spaceship Titanic é prever a variável `Transported`, que indica se um passageiro foi transportado para outra dimensão.
 
@@ -430,7 +567,19 @@ Em todas as colunas, a mediana é zero enquanto a média é muito maior. Isso in
 
 ### B — Split before you transform
 
-Os dados foram divididos em **80% para treino e 20% para teste**, mantendo a proporção da variável `Transported`.
+#### Abordagem
+
+Os dados foram divididos em **80% para treino e 20% para teste**, mantendo a proporção da variável `Transported` e com semente fixa (`random_state=42`). O split foi feito antes de qualquer imputação, encoding ou scaling.
+
+#### Código
+
+??? example "Código — `exercise3_preprocessing.py` — split estratificado"
+
+    ``` { .python .copy .select }
+    --8<-- "docs/exercises/data/code/exercise3_preprocessing.py:split"
+    ```
+
+#### Análise
 
 O resultado foi:
 
@@ -444,7 +593,7 @@ $$
 n_{test}=1739.
 $$
 
-O split foi realizado antes de qualquer imputação, encoding ou scaling. Essa ordem é importante porque todas essas transformações calculam estatísticas dos dados. Se o conjunto de teste fosse usado para calcular essas informações, haveria *data leakage*.
+Essa ordem é importante porque todas essas transformações calculam estatísticas dos dados. Se o conjunto de teste fosse usado para calcular essas informações, haveria *data leakage*.
 
 No conjunto de treino, antes de qualquer transformação, `FoodCourt` apresentou:
 
@@ -461,6 +610,24 @@ $$
 A diferença entre os dois valores mostra novamente a forte assimetria da distribuição.
 
 ### C — Preprocess
+
+#### Abordagem
+
+Os valores numéricos ausentes foram preenchidos pela mediana do treino e os categóricos pela categoria mais frequente. Também foi criada a feature `TotalSpend`, foi aplicada a transformação \(\log(1+x)\) às variáveis de gastos, as variáveis categóricas foram convertidas com one-hot encoding e as numéricas foram escaladas para \([-1,1]\). Todos os transformadores foram ajustados somente no treino.
+
+#### Código
+
+??? example "Código — `exercise3_preprocessing.py` — imputação, TotalSpend, log, encoding e scaling"
+
+    ``` { .python .copy .select }
+    --8<-- "docs/exercises/data/code/exercise3_preprocessing.py:encoder"
+
+    --8<-- "docs/exercises/data/code/exercise3_preprocessing.py:preprocess"
+
+    --8<-- "docs/exercises/data/code/exercise3_preprocessing.py:encode-scale"
+    ```
+
+#### Análise
 
 Para as variáveis numéricas, os valores ausentes foram preenchidos pela **mediana do conjunto de treino**. A mediana foi escolhida por ser menos sensível a valores extremos.
 
@@ -513,10 +680,28 @@ Esse intervalo foi escolhido por ser compatível com a faixa de saída da funç�
 
 ### D — Verify and visualize
 
+#### Abordagem
+
+A Figura 6 compara `FoodCourt` antes e depois da transformação \(\log(1+x)\). Em seguida, as matrizes finais de treino e teste são verificadas: valores ausentes, shape e faixa de valores.
+
+#### Código
+
+??? example "Código — `exercise3_preprocessing.py` — Figura 6 e verificações finais"
+
+    ``` { .python .copy .select }
+    --8<-- "docs/exercises/data/code/exercise3_preprocessing.py:fig6"
+
+    --8<-- "docs/exercises/data/code/exercise3_preprocessing.py:checks"
+    ```
+
+#### Figuras
+
 ![Distribuição de FoodCourt antes e depois da transformação](figures/fig06-foodcourt-preprocessing.png)
 /// caption
 **Figura 6** — Distribuição de `FoodCourt` antes e depois da transformação \(\log(1+x)\). A transformação reduz a influência dos valores extremos e comprime a longa cauda à direita.
 ///
+
+#### Análise
 
 As verificações finais apresentaram:
 

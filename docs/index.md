@@ -18,7 +18,7 @@ Quem responde por este repositório. Os **exercícios são individuais**; a equi
 
 | Nome completo | E-mail | GitHub |
 |---------------|--------|--------|
-| | | |
+|Carolina Eskenazi |carolinae3@al.insper.edu.br |carolinaeskenazi |
 
 !!! tip "Como usar este template"
 

@@ -78,6 +78,8 @@ markdown_extensions:
   - pymdownx.snippets:
       base_path: [.]
       check_paths: true
+      # Trechos com nome (arquivo.py:secao) saem sem o recuo de dentro das funções
+      dedent_subsections: true
       url_download: true
   - pymdownx.superfences:
       custom_fences:
