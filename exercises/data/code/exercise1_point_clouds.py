@@ -26,6 +26,7 @@ import numpy as np
 # Configuracao
 # ---------------------------------------------------------------------
 
+# --8<-- [start:config]
 FIGURES = Path(__file__).resolve().parents[1] / "figures"
 
 # Semente fixa pedida pelo enunciado.
@@ -52,12 +53,14 @@ STDS = np.array(
 )
 
 COLORS = ["tab:blue", "tab:orange", "tab:green", "tab:red"]
+# --8<-- [end:config]
 
 
 # ---------------------------------------------------------------------
 # Geracao dos dados
 # ---------------------------------------------------------------------
 
+# --8<-- [start:generate]
 def generate(scale: float = 1.0) -> tuple[np.ndarray, np.ndarray]:
     """Gera 100 pontos por classe com os desvios multiplicados por scale."""
 
@@ -81,12 +84,14 @@ def generate(scale: float = 1.0) -> tuple[np.ndarray, np.ndarray]:
     y = np.concatenate(ys)
 
     return X, y
+# --8<-- [end:generate]
 
 
 # ---------------------------------------------------------------------
 # Metricas
 # ---------------------------------------------------------------------
 
+# --8<-- [start:metric-functions]
 def separation_ratios(
     scale: float = 1.0,
 ) -> dict[tuple[int, int], float]:
@@ -122,12 +127,14 @@ def mixing_rate(X: np.ndarray, y: np.ndarray) -> float:
     nearest_center = distances.argmin(axis=1)
 
     return float(np.mean(nearest_center != y))
+# --8<-- [end:metric-functions]
 
 
 # ---------------------------------------------------------------------
 # Funcoes auxiliares para os graficos
 # ---------------------------------------------------------------------
 
+# --8<-- [start:scatter]
 def scatter_classes(
     ax: plt.Axes,
     X: np.ndarray,
@@ -161,8 +168,10 @@ def scatter_classes(
 
     ax.set_xlabel("$x_1$")
     ax.set_ylabel("$x_2$")
+# --8<-- [end:scatter]
 
 
+# --8<-- [start:boundaries]
 def plot_boundaries(ax: plt.Axes) -> None:
     """Esboca regioes de decisao usando as distribuicoes conhecidas.
 
@@ -232,6 +241,7 @@ def plot_boundaries(ax: plt.Axes) -> None:
 
     ax.set_xlim(xlim)
     ax.set_ylim(ylim)
+# --8<-- [end:boundaries]
 
 
 def save(fig: plt.Figure, filename: str) -> None:
@@ -253,6 +263,7 @@ def save(fig: plt.Figure, filename: str) -> None:
 def main() -> None:
     FIGURES.mkdir(parents=True, exist_ok=True)
 
+    # --8<-- [start:datasets]
     # -------------------------------------------------------------
     # Gera os quatro datasets pedidos no item B.
     # O mesmo objeto rng e utilizado em todas as geracoes.
@@ -266,7 +277,9 @@ def main() -> None:
     # O dataset de s = 1 tambem representa o dataset original
     # utilizado no item A.
     X, y = datasets[1.0]
+    # --8<-- [end:datasets]
 
+    # --8<-- [start:metrics]
     # -------------------------------------------------------------
     # Metricas
     # -------------------------------------------------------------
@@ -286,19 +299,20 @@ def main() -> None:
     # Como todas as dispersoes dobram de s=1 para s=2,
     # o separation ratio cai pela metade.
     min_ratio_s2 = min_ratio / 2.0
+    # --8<-- [end:metrics]
 
+    # --8<-- [start:fig1]
     # -------------------------------------------------------------
-    # Figura 1
-    # Pontos + centros + esboco das fronteiras no MESMO grafico.
+    # Figura 1 (item A)
+    # Pontos + centros de cada classe.
     # -------------------------------------------------------------
 
     fig, ax = plt.subplots(figsize=(8, 5.5))
 
     scatter_classes(ax, X, y)
-    plot_boundaries(ax)
 
     ax.set_title(
-        "Figura 1 — Nuvens gaussianas e fronteiras esbocadas (s = 1)"
+        "Figura 1 — Nuvens gaussianas (s = 1)"
     )
 
     ax.legend(
@@ -309,7 +323,34 @@ def main() -> None:
     fig.tight_layout()
 
     save(fig, "fig01-point-clouds.png")
+    # --8<-- [end:fig1]
 
+    # --8<-- [start:fig1-boundaries]
+    # -------------------------------------------------------------
+    # Figura 1 com o esboco das fronteiras (item C)
+    # Mesmos pontos da Figura 1 + regioes de decisao.
+    # -------------------------------------------------------------
+
+    fig, ax = plt.subplots(figsize=(8, 5.5))
+
+    scatter_classes(ax, X, y)
+    plot_boundaries(ax)
+
+    ax.set_title(
+        "Figura 1 — Fronteiras de decisao esbocadas (s = 1)"
+    )
+
+    ax.legend(
+        loc="upper left",
+        bbox_to_anchor=(1.01, 1),
+    )
+
+    fig.tight_layout()
+
+    save(fig, "fig01-boundaries.png")
+    # --8<-- [end:fig1-boundaries]
+
+    # --8<-- [start:fig2]
     # -------------------------------------------------------------
     # Figura 2
     # Quatro datasets com exatamente os mesmos limites dos eixos.
@@ -381,7 +422,9 @@ def main() -> None:
     fig.tight_layout(rect=(0, 0.07, 1, 0.96))
 
     save(fig, "fig02-spread.png")
+    # --8<-- [end:fig2]
 
+    # --8<-- [start:fig3]
     # -------------------------------------------------------------
     # Figura 3
     # Mixing rate em funcao de s.
@@ -436,7 +479,9 @@ def main() -> None:
     fig.tight_layout()
 
     save(fig, "fig03-mixing-rate.png")
+    # --8<-- [end:fig3]
 
+    # --8<-- [start:report]
     # -------------------------------------------------------------
     # Resultados numericos para colocar no relatorio.
     # -------------------------------------------------------------
@@ -480,6 +525,7 @@ def main() -> None:
             f"{rates[scale]:.2%} "
             f"({n_mixed}/{total} pontos)"
         )
+    # --8<-- [end:report]
 
 
 if __name__ == "__main__":

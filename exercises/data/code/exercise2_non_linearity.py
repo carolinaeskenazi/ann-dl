@@ -25,6 +25,7 @@ N_PER_CLASS = 500
 COLORS = ["tab:blue", "tab:orange"]
 
 
+# --8<-- [start:dataset1]
 # ---------------------------------------------------------------------
 # Dataset I — shifted Gaussians
 # ---------------------------------------------------------------------
@@ -76,8 +77,10 @@ def generate_dataset_i():
     )
 
     return X, y, class_a, class_b
+# --8<-- [end:dataset1]
 
 
+# --8<-- [start:dataset2]
 # ---------------------------------------------------------------------
 # Dataset II — concentric shells
 # ---------------------------------------------------------------------
@@ -124,8 +127,10 @@ def generate_dataset_ii():
     )
 
     return X, y, class_c, class_d
+# --8<-- [end:dataset2]
 
 
+# --8<-- [start:center-distance]
 def center_distance(class_1, class_2):
     """Distancia euclidiana entre os centroides em 5D."""
 
@@ -137,6 +142,7 @@ def center_distance(class_1, class_2):
             center_1 - center_2
         )
     )
+# --8<-- [end:center-distance]
 
 
 def save(fig, filename):
@@ -162,6 +168,7 @@ def main():
     X1, y1, class_a, class_b = generate_dataset_i()
     X2, y2, class_c, class_d = generate_dataset_ii()
 
+    # --8<-- [start:pca]
     # -------------------------------------------------------------
     # PCA
     # -------------------------------------------------------------
@@ -179,7 +186,9 @@ def main():
     explained_2 = float(
         pca2.explained_variance_ratio_.sum()
     )
+    # --8<-- [end:pca]
 
+    # --8<-- [start:distances]
     # -------------------------------------------------------------
     # Distancia entre centros no espaco original 5D.
     # -------------------------------------------------------------
@@ -193,7 +202,9 @@ def main():
         class_c,
         class_d,
     )
+    # --8<-- [end:distances]
 
+    # --8<-- [start:fig4]
     # -------------------------------------------------------------
     # Figura 4 — PCA
     # -------------------------------------------------------------
@@ -256,7 +267,9 @@ def main():
         fig,
         "fig04-pca.png",
     )
+    # --8<-- [end:fig4]
 
+    # --8<-- [start:fig5]
     # -------------------------------------------------------------
     # Figura 5 — raios ||x|| calculados em 5D
     # -------------------------------------------------------------
@@ -339,7 +352,9 @@ def main():
         fig,
         "fig05-radius.png",
     )
+    # --8<-- [end:fig5]
 
+    # --8<-- [start:radius-rule]
     # -------------------------------------------------------------
     # Uma funcao nao linear simples para Dataset II.
     #
@@ -362,6 +377,7 @@ def main():
             shell_prediction != y2
         )
     )
+    # --8<-- [end:radius-rule]
 
     # -------------------------------------------------------------
     # Resultados.
