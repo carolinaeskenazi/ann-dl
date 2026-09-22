@@ -173,7 +173,7 @@ As taxas de mistura obtidas foram:
 
 Em \(s=0.5\), praticamente não há mistura. Em \(s=1\), a taxa sobe para **7.25%**, mostrando que já existe sobreposição relevante entre algumas classes.
 
-A partir de \(s=1\), algumas classes já deixam de ser perfeitamente separáveis por fronteiras lineares. Nesse ponto, o menor *separation ratio* é \(r_{01}=1.326\).
+A partir de \(s=1\), a sobreposição entre algumas classes aumenta, tornando a separação mais difícil e indicando que fronteiras lineares simples podem não ser suficientes para representar bem os dados. Nesse ponto, o menor *separation ratio* é \(r_{01}=1.326\).
 
 O valor de \(r_{ij}\) deve ser interpretado como uma medida de separação relativa, e não como um teste formal de separabilidade linear. Portanto, pode existir sobreposição mesmo quando \(r_{ij}>1\).
 
@@ -216,7 +216,7 @@ o que faz parte de seus pontos se estenderem na direção da classe 1.
 
 Uma única reta não consegue separar quatro classes, pois divide o plano em apenas duas regiões. Um conjunto de fronteiras lineares consegue criar mais regiões, mas não garante separação perfeita quando existem pontos de diferentes classes ocupando regiões semelhantes.
 
-Como as classes possuem dispersões diferentes, as fronteiras não precisam ser retas. Um Perceptron simples consegue aprender apenas uma fronteira linear, enquanto uma rede com camadas ocultas pode representar fronteiras não lineares mais complexas.
+Como as classes possuem diferentes distribuições e dispersões, as fronteiras de maior densidade podem ser não lineares. Um Perceptron simples consegue aprender apenas uma fronteira linear, enquanto uma rede com camadas ocultas pode representar fronteiras não lineares mais complexas.
 
 O efeito da dispersão aparece claramente nas taxas de mistura:
 
@@ -447,7 +447,7 @@ No Dataset II, a distância entre os centros é próxima de zero, mas os histogr
 
 Um separador linear em cinco dimensões corresponde a um hiperplano, que divide o espaço em dois semiespaços. Ele não consegue criar uma região fechada que envolva completamente a casca interna sem também incluir pontos da casca externa.
 
-Por isso, essa estrutura não pode ser separada por uma única fronteira linear. Coletar mais dados não resolve o problema, pois a limitação está no formato da fronteira, e não na quantidade de amostras.
+Por isso, essa estrutura não pode ser separada por uma única fronteira linear. Coletar mais dados, por si só, não resolve a limitação de um classificador linear, pois o problema está na forma da fronteira necessária para separar as classes.
 
 O fato de as classes parecerem misturadas na projeção PCA também não prova que elas sejam inseparáveis no espaço original. PCA é uma transformação linear e, no Dataset II, apenas **42.91%** da variância foi preservada pelas duas primeiras componentes.
 
@@ -676,7 +676,7 @@ $$
 
 com `MinMaxScaler`, ajustado somente no treino.
 
-Esse intervalo foi escolhido por ser compatível com a faixa de saída da função `tanh`. O scaler usa `clip=True`: valores do teste fora da faixa observada no treino são cortados em \(-1\) ou \(1\), por isso a faixa do teste também é exatamente \([-1,1]\). As colunas one-hot já estão em \(\{0,1\}\) e não passam pelo scaler.
+Esse intervalo foi escolhido para deixar as entradas na mesma faixa da função `tanh`, facilitando o uso da ativação sem diferenças muito grandes de escala entre as variáveis. O scaler usa `clip=True`: valores do teste fora da faixa observada no treino são cortados em \(-1\) ou \(1\), por isso a faixa do teste também é exatamente \([-1,1]\). As colunas one-hot já estão em \(\{0,1\}\) e não passam pelo scaler.
 
 ### D — Verify and visualize
 
@@ -774,3 +774,5 @@ A combinação de análise geométrica, redução de dimensionalidade e pré-pro
 | 11 | Média e mediana de `FoodCourt` no treino, antes de transformar | **452.611 e 0.000**                                 |
 | 12 | Shape final da matriz de features de treino                    | **(6954, 17)**                                      |
 | 13 | Mínimo e máximo de treino e teste após scaling                 | **Treino: [-1.000, 1.000]; Teste: [-1.000, 1.000]** |
+
+Todos os números acima são impressos pelos próprios scripts e reproduzem a partir da semente `np.random.default_rng(42)`.
