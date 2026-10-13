@@ -641,15 +641,15 @@ Por semente:
 | `[4, 48, 3]`     | 1               | 387        | 0.2888                | 0.8573            |
 | `[4, 16, 16, 3]` | 2               | 403        | 0.2662                | 0.8620            |
 
-Com quase o mesmo número de parâmetros, a rede rasa e larga chega a 85.73%, e a profunda a 86.20%. A diferença entre as duas é de 0.47 ponto, menor do que a variação entre sementes (desvio padrão de 0.6 a 1.0 ponto). A comparação com a rede mais larga sugere que boa parte da melhoria está relacionada ao aumento da capacidade do modelo, e não necessariamente à segunda camada oculta. Como as arquiteturas ainda diferem em número de parâmetros (387 contra 403) e em como eles estão distribuídos, essa interpretação não permite isolar completamente o efeito da profundidade.
+Com quase o mesmo número de parâmetros, a rede rasa e larga chega a 85.73%, e a profunda a 86.20%. A diferença entre as duas é de 0.47 ponto, menor do que a variação entre sementes (desvio padrão de 0.6 a 1.0 ponto). A diferença de apenas 0.47 ponto percentual sugere que boa parte da melhoria pode estar relacionada ao aumento da capacidade da rede. Entretanto, como as duas arquiteturas ainda diferem em número de parâmetros (387 contra 403) e em como eles estão distribuídos, essa comparação não permite descartar completamente uma contribuição da profundidade.
 
-**Estrutura dos dados.** Isso é coerente com o que os dados pedem. São 6 clusters em 4 dimensões, e a fronteira necessária é formada por alguns pedaços retos em volta de cada cluster. Uma camada oculta já representa esse tipo de fronteira; o controle sugere que o que limitava a rede do Exercício 3 era ter só 16 neurônios para isso, mais do que a falta de uma segunda camada. Uma segunda camada serve para compor as features da primeira, e este conjunto não parece ter estrutura que precise dessa composição.
+**Estrutura dos dados.** Isso é coerente com o que os dados pedem. São 6 clusters em 4 dimensões, e a fronteira necessária é formada por alguns pedaços retos em volta de cada cluster. Uma camada oculta já representa esse tipo de fronteira; o controle sugere que o que limitava a rede do Exercício 3 era ter só 16 neurônios para isso, mais do que a falta de uma segunda camada. Uma segunda camada serve para compor as features da primeira. Neste conjunto, não foi identificada uma vantagem expressiva da composição adicional de representações proporcionada pela segunda camada oculta.
 
 **Orçamento de treino.** A Figura 6 mostra que, na época 2000, as duas curvas ainda estão descendo. Com o mesmo orçamento, a rede maior chegou a uma perda menor (0.2662 contra 0.3280). Parte da diferença de acurácia pode ser só isso: a rede do Exercício 3 ainda não tinha terminado de treinar. Não aumentei as épocas nem mudei \(\eta\) para testar essa hipótese, porque o exercício pede o mesmo orçamento para as duas.
 
 **Perda de treino contra acurácia de teste.** As duas contam a mesma história na direção, mas não no tamanho. A perda de treino cai 19% (de 0.3280 para 0.2662) e a acurácia de treino sobe 2.94 pontos, enquanto a de teste sobe 2.47. A folga entre treino e teste aumenta um pouco, de 3.70 para 4.17 pontos: uma parte do que a rede profunda ganhou no treino não se transfere para o teste.
 
-**Que dados fariam a profundidade valer a pena.** Dados em que a resposta depende de uma hierarquia, com padrões formados por padrões menores. Em imagens, por exemplo, bordas formam texturas, que formam partes, que formam objetos; cada camada reaproveita o que a anterior detectou. Nesses casos uma rede rasa precisaria de um número muito maior de neurônios para representar a mesma função. Em um conjunto de poucos clusters gaussianos como este, essa hierarquia não existe.
+**Que dados fariam a profundidade valer a pena.** Dados em que a resposta depende de uma hierarquia, com padrões formados por padrões menores. Em imagens, por exemplo, bordas formam texturas, que formam partes, que formam objetos; cada camada reaproveita o que a anterior detectou. Nesses casos uma rede rasa precisaria de um número muito maior de neurônios para representar a mesma função. Um conjunto de poucos clusters gaussianos como este não foi gerado com esse tipo de hierarquia, embora eu não tenha testado isso experimentalmente.
 
 ---
 
@@ -665,7 +665,7 @@ No Exercício 4, a segunda camada oculta melhorou a acurácia de teste em 2.47 p
 
 ## Conclusão
 
-A camada oculta é o que permite fronteiras que uma reta não faz, e isso apareceu nos dois conjuntos: em ambos, cada classe ocupa mais de uma região do espaço. A segunda camada oculta melhorou a acurácia nos experimentos realizados. Entretanto, a comparação com uma rede rasa de tamanho semelhante indica que o aumento da capacidade pode explicar boa parte desse resultado. Assim, não foi possível demonstrar uma vantagem expressiva da profundidade isoladamente.
+A camada oculta é o que permite fronteiras que uma reta não faz, e isso apareceu nos dois conjuntos: em ambos, cada classe ocupa mais de uma região do espaço. A segunda camada oculta melhorou a acurácia nos experimentos realizados. Porém, a comparação com uma rede rasa de capacidade semelhante sugere que parte importante desse ganho pode estar relacionada ao aumento do número de parâmetros, e não exclusivamente à profundidade.
 
 Em nenhum dos casos a rede chegou a 100%, nem no treino. Os erros que sobram são compatíveis com a sobreposição entre os clusters, que é uma característica dos dados, e não do modelo.
 
