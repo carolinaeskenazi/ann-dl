@@ -138,7 +138,7 @@ $$
 
 ### C — Parameter update
 
-Cada parâmetro recebe \(\theta \leftarrow \theta - 0.3\,\partial L/\partial\theta\):
+Cada parâmetro recebe \(\theta \leftarrow \theta - 0.3\,\partial L/\partial\theta\). O enunciado fala em oito parâmetros, mas a rede tem **nove**: 4 pesos em \(\mathbf{W}^{(1)}\), 2 biases em \(\mathbf{b}^{(1)}\), 2 pesos em \(\mathbf{W}^{(2)}\) e 1 bias \(b^{(2)}\). A tabela traz os nove:
 
 | Parâmetro        | Valor antigo | Gradiente     | Valor novo                               |
 | ---------------- | -----------: | ------------: | ---------------------------------------- |
@@ -376,7 +376,7 @@ Uma reta divide o plano em dois semiplanos, e um semiplano é convexo: se ele co
 
 Isso explica por que a baseline não chega perto de 90%, mas não explica por que ela fica **abaixo de 50%**. Uma reta que isola um cluster acertaria perto de 75%; a melhor reta desse tipo que encontrei no treino, \(x_1 + x_2 = 3.46\), acerta 69% do teste. A regressão logística não chega nela porque não maximiza a acurácia: ela minimiza a entropia cruzada. Como os dois clusters da classe 1 são simétricos em relação à origem, a média da classe 1 é \((0,0)\), a mesma da classe 0. Nenhuma direção do plano está correlacionada com o rótulo, e o melhor que o modelo linear faz é não apostar em nenhuma. É o que os pesos mostram: \(w = [0.0296,\ 0.0015]\) e \(b = -0.0031\), praticamente zero. Com pesos desse tamanho, a probabilidade prevista fica perto de 0.5 para todos os pontos, e a fronteira (a reta tracejada quase vertical da Figura 3) é definida só pelo ruído da amostra de treino. No teste, ela vale um chute: 47.5%, que por acaso caiu um pouco abaixo de 50%.
 
-O MLP resolve porque cada neurônio oculto é uma \(\tanh\) de uma função linear, ou seja, uma fronteira reta própria. A camada de saída combina essas fronteiras, e duas delas, paralelas e em posições diferentes, já bastam para formar uma faixa. Os 17 erros que sobram no teste são pontos na zona em que os clusters se sobrepõem, como se vê na Figura 3 perto das bordas da faixa.
+O MLP resolve porque cada neurônio oculto calcula uma transformação não linear de uma combinação linear das entradas, \(\tanh(w\cdot x + b)\). Esse valor muda de sinal ao cruzar a reta \(w\cdot x + b = 0\) e satura em \(\pm 1\) longe dela, então cada neurônio funciona como uma transição suave em torno de uma reta própria. A camada de saída soma essas transições com pesos diferentes, e a soma de duas delas, em retas paralelas e posições diferentes, já basta para formar uma faixa. Os 17 erros que sobram no teste são pontos na zona em que os clusters se sobrepõem, como se vê na Figura 3 perto das bordas da faixa.
 
 ---
 
@@ -538,7 +538,7 @@ Somando os dois sentidos de cada par na Figura 5:
 
 O par mais confundido é **0 ↔ 1**, com 17 erros, e a maior célula fora da diagonal é a de pontos da classe 1 previstos como classe 0 (11). A diferença para os outros pares é pequena (17, 15 e 14), então o mais correto é dizer que os erros estão espalhados pelos três pares, com a classe 1 sendo a mais difícil (80% de acerto, contra 84% da classe 0 e 90% da classe 2).
 
-A explicação que proponho vem de como o `make_classification` monta os dados. Ele coloca os centros dos 6 clusters em vértices de um hipercubo de 4 dimensões, com lado \(2 \times\) `class_sep` \(= 2\), e espalha os pontos de cada cluster em torno do seu vértice com dispersão da ordem de 1. Dois vértices vizinhos ficam a uma distância de 2, que é pouco para clusters desse tamanho, então clusters vizinhos de classes diferentes se sobrepõem. Além disso, cada classe é formada por 2 clusters em vértices diferentes, então nenhuma classe ocupa uma região única. Os erros que sobram seriam dessa zona de sobreposição entre clusters vizinhos, e a classe 1 seria a que tem um cluster mais encostado nos da classe 0. Não medi os centros dos clusters, porque o gerador não os devolve; o que sustenta essa leitura é que a acurácia de **treino** também para em 87.3%, ou seja, a rede não separa completamente nem os pontos que viu.
+A explicação que proponho é uma hipótese, baseada em como o `make_classification` monta os dados. Ele coloca os centros dos 6 clusters em vértices de um hipercubo de 4 dimensões, com lado \(2 \times\) `class_sep` \(= 2\), e espalha os pontos de cada cluster em torno do seu vértice com dispersão da ordem de 1. Dois vértices vizinhos ficam a uma distância de 2, que é pouco para clusters desse tamanho, então clusters vizinhos de classes diferentes se sobrepõem. Além disso, cada classe é formada por 2 clusters em vértices diferentes, então nenhuma classe ocupa uma região única. Os erros que sobram seriam dessa zona de sobreposição entre clusters vizinhos, e a classe 1 seria a que tem um cluster mais encostado nos da classe 0. Não medi os centros dos clusters, porque o gerador não os devolve, então não sei quais clusters são de fato vizinhos: isso é uma interpretação, e não um resultado. O que é compatível com ela é que a acurácia de **treino** também para em 87.3%, ou seja, a rede não separa completamente nem os pontos que viu.
 
 A baseline de regressão logística, na mesma divisão, tem acurácia de teste de **0.6633**. A camada oculta acrescentou **18.3 pontos percentuais** (de 66.33% para 84.67%). A matriz de confusão da baseline mostra onde:
 
@@ -593,7 +593,7 @@ Com a mesma semente 42 do Exercício 3:
 
 #### Abordagem
 
-As duas redes foram treinadas com 5 sementes de inicialização (42, 43, 44, 45 e 46). A semente muda só os pesos iniciais; os dados e a divisão são sempre os mesmos.
+As duas redes foram treinadas com 5 sementes de inicialização (42, 43, 44, 45 e 46). A semente muda só os pesos iniciais; os dados e a divisão de treino e teste são sempre os mesmos. As médias medem, portanto, a sensibilidade à inicialização, e não a variação que viria de outra divisão dos dados.
 
 #### Código
 
@@ -633,7 +633,7 @@ Por semente:
 
 **O que foi medido.** Aqui a rede mais profunda foi melhor: em média, **+2.47 pontos percentuais** de acurácia de teste (86.20% contra 83.73%), e a diferença foi positiva nas 5 sementes, de +1.0 a +3.67 pontos. O enunciado antecipava que a profundidade provavelmente não ajudaria; não foi o que estes números mostraram, e estou reportando o que saiu.
 
-**Mas o ganho não parece vir da profundidade em si.** Ao acrescentar a segunda camada, a rede também passou de 131 para 403 parâmetros, então duas coisas mudaram ao mesmo tempo. Para separar uma da outra, o script treina uma terceira rede de controle, com **uma** camada oculta de 48 neurônios (`[4, 48, 3]`, 387 parâmetros), nas mesmas condições:
+**O ganho pode não vir da profundidade em si.** Ao acrescentar a segunda camada, a rede também passou de 131 para 403 parâmetros, então duas coisas mudaram ao mesmo tempo. Para separar uma da outra, o script treina uma terceira rede de controle, com **uma** camada oculta de 48 neurônios (`[4, 48, 3]`, 387 parâmetros), nas mesmas condições:
 
 | Rede             | Camadas ocultas | Parâmetros | Perda de treino final | Acurácia de teste |
 | ---------------- | :-------------: | :--------: | :-------------------: | :---------------: |
@@ -641,9 +641,9 @@ Por semente:
 | `[4, 48, 3]`     | 1               | 387        | 0.2888                | 0.8573            |
 | `[4, 16, 16, 3]` | 2               | 403        | 0.2662                | 0.8620            |
 
-Com quase o mesmo número de parâmetros, a rede rasa e larga chega a 85.73%, e a profunda a 86.20%. A diferença entre as duas é de 0.47 ponto, menor do que a variação entre sementes (desvio padrão de 0.6 a 1.0 ponto). Ou seja, quase todo o ganho medido vem de ter mais capacidade, e não de empilhar camadas.
+Com quase o mesmo número de parâmetros, a rede rasa e larga chega a 85.73%, e a profunda a 86.20%. A diferença entre as duas é de 0.47 ponto, menor do que a variação entre sementes (desvio padrão de 0.6 a 1.0 ponto). A comparação com a rede mais larga sugere que boa parte da melhoria está relacionada ao aumento da capacidade do modelo, e não necessariamente à segunda camada oculta. Como as arquiteturas ainda diferem em número de parâmetros (387 contra 403) e em como eles estão distribuídos, essa interpretação não permite isolar completamente o efeito da profundidade.
 
-**Estrutura dos dados.** Isso é coerente com o que os dados pedem. São 6 clusters em 4 dimensões, e a fronteira necessária é formada por alguns pedaços retos em volta de cada cluster. Uma camada oculta já representa esse tipo de fronteira; o que limitava a rede do Exercício 3 era ter só 16 neurônios para isso, e não a falta de uma segunda camada. Uma segunda camada serve para compor as features da primeira, e aqui não há nada para compor.
+**Estrutura dos dados.** Isso é coerente com o que os dados pedem. São 6 clusters em 4 dimensões, e a fronteira necessária é formada por alguns pedaços retos em volta de cada cluster. Uma camada oculta já representa esse tipo de fronteira; o controle sugere que o que limitava a rede do Exercício 3 era ter só 16 neurônios para isso, mais do que a falta de uma segunda camada. Uma segunda camada serve para compor as features da primeira, e este conjunto não parece ter estrutura que precise dessa composição.
 
 **Orçamento de treino.** A Figura 6 mostra que, na época 2000, as duas curvas ainda estão descendo. Com o mesmo orçamento, a rede maior chegou a uma perda menor (0.2662 contra 0.3280). Parte da diferença de acurácia pode ser só isso: a rede do Exercício 3 ainda não tinha terminado de treinar. Não aumentei as épocas nem mudei \(\eta\) para testar essa hipótese, porque o exercício pede o mesmo orçamento para as duas.
 
@@ -659,15 +659,15 @@ Os quatro exercícios usam a mesma ideia e, a partir do segundo, o mesmo código
 
 No Exercício 2, o modelo linear ficou em 47.5% e o MLP com 8 neurônios ocultos chegou a 91.5%. A diferença está na forma da região da classe 1, que tem dois pedaços separados. No Exercício 3, a mesma classe, só com outros argumentos, chegou a 84.67% em três classes, contra 66.33% da baseline; a camada oculta resolveu principalmente o par 1 ↔ 2.
 
-No Exercício 4, a segunda camada oculta melhorou a acurácia de teste em 2.47 pontos na média de 5 sementes. Porém uma rede de uma camada com quase o mesmo número de parâmetros chegou praticamente ao mesmo resultado.
+No Exercício 4, a segunda camada oculta melhorou a acurácia de teste em 2.47 pontos na média de 5 sementes. Porém uma rede de uma camada com quase o mesmo número de parâmetros chegou a um resultado próximo (85.73% contra 86.20%).
 
 ---
 
 ## Conclusão
 
-A camada oculta é o que permite fronteiras que uma reta não faz, e isso apareceu nos dois conjuntos: em ambos, cada classe ocupa mais de uma região do espaço. Já a segunda camada oculta não trouxe um ganho próprio nestes dados. O que melhorou o resultado foi a capacidade da rede, e ela pode ser aumentada tanto com mais camadas quanto com mais neurônios.
+A camada oculta é o que permite fronteiras que uma reta não faz, e isso apareceu nos dois conjuntos: em ambos, cada classe ocupa mais de uma região do espaço. A segunda camada oculta melhorou a acurácia nos experimentos realizados. Entretanto, a comparação com uma rede rasa de tamanho semelhante indica que o aumento da capacidade pode explicar boa parte desse resultado. Assim, não foi possível demonstrar uma vantagem expressiva da profundidade isoladamente.
 
-Em nenhum dos casos a rede chegou a 100%, nem no treino. Os erros que sobram vêm da sobreposição entre os clusters, e isso é uma característica dos dados, não do modelo.
+Em nenhum dos casos a rede chegou a 100%, nem no treino. Os erros que sobram são compatíveis com a sobreposição entre os clusters, que é uma característica dos dados, e não do modelo.
 
 ---
 
@@ -677,7 +677,7 @@ Em nenhum dos casos a rede chegou a 100%, nem no treino. Os erros que sobram vê
 | -: | -------------------------------------------------------------- | --------------------------------------------------------------------------------------------- |
 |  1 | Ex. 1 — \(\mathbf{z}^{(1)}\) e \(\mathbf{h}^{(1)}\)             | \(\mathbf{z}^{(1)} = [0.2700,\ -0.1800]\), \(\mathbf{h}^{(1)} = [0.2636,\ -0.1781]\)          |
 |  2 | Ex. 1 — \(u^{(2)}\), \(\hat{y}\) e \(L\)                        | \(u^{(2)} = 0.3852\), \(\hat{y} = 0.3672\), \(L = 0.4004\)                                    |
-|  3 | Ex. 1 — os oito parâmetros atualizados                         | \(\mathbf{W}^{(1)} = \begin{bmatrix} 0.3764 & -0.1306 \\ 0.1523 & 0.4191 \end{bmatrix}\), \(\mathbf{b}^{(1)} = [0.2528,\ -0.2954]\), \(\mathbf{W}^{(2)} = [0.5866,\ -0.3585]\), \(b^{(2)} = 0.5284\) |
+|  3 | Ex. 1 — os parâmetros atualizados (nove, e não oito: ver item C) | \(\mathbf{W}^{(1)} = \begin{bmatrix} 0.3764 & -0.1306 \\ 0.1523 & 0.4191 \end{bmatrix}\), \(\mathbf{b}^{(1)} = [0.2528,\ -0.2954]\), \(\mathbf{W}^{(2)} = [0.5866,\ -0.3585]\), \(b^{(2)} = 0.5284\) |
 |  4 | Ex. 2 — acurácia de teste da baseline linear                   | **0.4750**                                                                                    |
 |  5 | Ex. 2 — arquitetura e acurácia de teste                        | `[2, 8, 1]`, **0.9150**                                                                       |
 |  6 | Ex. 3 — arquitetura e acurácia de teste                        | `[4, 16, 3]`, **0.8467**                                                                      |
