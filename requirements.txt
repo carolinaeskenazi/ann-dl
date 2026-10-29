@@ -16,3 +16,10 @@ numpy
 pandas
 matplotlib
 scikit-learn
+scipy
+
+# --- PyTorch (exercício VAE) ----------------------------------------------
+# O índice CPU evita que o pip baixe a versão com CUDA (vários GB) no CI.
+--extra-index-url https://download.pytorch.org/whl/cpu
+torch
+torchvision
